@@ -21,25 +21,89 @@ Claude Desktop Gateway        DS2Claude (:8765)          上游 API
 
 Claude Desktop 的开发者模式 Gateway 只接受 `claude-*` 开头的模型名。DS2Claude 在中间做模型名到真实模型名的映射，然后原样转发到目标 API。协议完整透传，不做任何转换。
 
-## 快速开始
+## 一键安装
 
 ```bash
-# 1. 安装依赖
-pip install -r requirements.txt
+git clone https://github.com/brandnewmax/DS2Claude.git && cd DS2Claude && pip install -r requirements.txt
+```
 
-# 2. 编辑 groups.yaml，填入你的 API Key
-#    （文件里有注释，照格式改就行）
+## 快速开始 — Claude Desktop
 
-# 3. 启动
+```bash
+# 1. 编辑 groups.yaml，填入你的 API Key，然后启动
 python3 proxy.py
 
-# 4. 浏览器打开 http://127.0.0.1:8765 管理组和映射
-
-# 5. Claude Desktop → 设置 → 开发者模式 → Gateway
+# 2. Claude Desktop → 设置 → 开发者模式 → Gateway
 #    Base URL: http://127.0.0.1:8765
 #    API Key:  随便填（代理会自动替换）
 #    Models:   claude-opus-4-7, claude-sonnet-4-6, claude-haiku-4-5
 ```
+
+## 快速开始 — Claude Code / 其他 CLI
+
+Claude Code 等 CLI 工具同样可以通过代理调用第三方模型，而且支持一键热切换。
+
+### 方法 1：终端函数（推荐）
+
+将以下函数添加到 `~/.zshrc`（或 `~/.bashrc`）：
+
+```bash
+# DS2Claude 代理 — 通过本地代理调用任意模型
+ck-proxy() {
+  unset ANTHROPIC_API_KEY
+  export ANTHROPIC_BASE_URL="http://127.0.0.1:8765"
+  export ANTHROPIC_AUTH_TOKEN="dummy"               # 代理会自动替换
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4-7"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4-6"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4-5"
+  export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+  export CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK="1"
+  export DISABLE_AUTOUPDATER="1"
+  claude --dangerously-skip-permissions "$@"
+}
+```
+
+使用：
+
+```bash
+source ~/.zshrc
+ck-proxy "帮我写一个快速排序"
+```
+
+模型名 `claude-opus-4-7` / `claude-sonnet-4-6` / `claude-haiku-4-5` 会被代理映射到 `groups.yaml` 里当前激活组对应的真实模型。想切换模型平台，打开 `http://127.0.0.1:8765` 点一下即可，终端不用重启。
+
+### 方法 2：单独配置每个模型（复用你的 zshrc 风格）
+
+如果你习惯像这样每个模型一个 alias：
+
+```bash
+# DeepSeek V4 Pro
+ck-deepseek() {
+  unset ANTHROPIC_API_KEY
+  export ANTHROPIC_BASE_URL="http://127.0.0.1:8765"
+  export ANTHROPIC_AUTH_TOKEN="dummy"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4-7"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4-6"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4-5"
+  export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+  export CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK="1"
+  export DISABLE_AUTOUPDATER="1"
+  claude --dangerously-skip-permissions "$@"
+}
+```
+
+**核心原理**：所有 variant 的 `ANTHROPIC_BASE_URL` 都指向同一个代理 `http://127.0.0.1:8765`。模型切换不再靠改环境变量，而是靠代理的组管理。你在 Web UI 里切换到 DeepSeek 就是 DeepSeek，切换到 Kimi 就是 Kimi。
+
+### 其他 CLI 工具
+
+任何支持自定义 `ANTHROPIC_BASE_URL` 的 Anthropic SDK 工具都可以用同样的方式接入：
+
+```bash
+export ANTHROPIC_BASE_URL="http://127.0.0.1:8765"
+export ANTHROPIC_AUTH_TOKEN="dummy"
+```
+
+工具发出的请求经代理替换模型名和 API Key 后转发到目标平台。
 
 ## 支持的模型平台
 
