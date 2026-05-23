@@ -1,0 +1,106 @@
+# DS2Claude 模型组配置
+# 当前激活的组 → 切换组无需重启服务
+# 所有 API Key 请替换为你自己的真实 Key
+active: deepseek
+
+groups:
+  # ── DeepSeek V4 Pro ────────────────────────────────────
+  deepseek:
+    label: DeepSeek V4 Pro [1M]
+    mappings:
+      - source: claude-opus-4-7
+        target:
+          model: deepseek-v4-pro[1m]
+          api_base: https://api.deepseek.com/anthropic
+          api_key: "sk-your-deepseek-api-key"
+      - source: claude-sonnet-4-6
+        target:
+          model: deepseek-v4-pro[1m]
+          api_base: https://api.deepseek.com/anthropic
+          api_key: "sk-your-deepseek-api-key"
+      - source: claude-haiku-4-5
+        target:
+          model: deepseek-v4-flash
+          api_base: https://api.deepseek.com/anthropic
+          api_key: "sk-your-deepseek-api-key"
+
+  # ── GLM-5.1 (智谱) ────────────────────────────────────
+  glm:
+    label: GLM-5.1 (智谱)
+    mappings:
+      - source: claude-opus-4-7
+        target:
+          model: glm-5.1
+          api_base: https://open.bigmodel.cn/api/anthropic
+          api_key: "your-zhipu-api-key"
+      - source: claude-sonnet-4-6
+        target:
+          model: glm-5.1
+          api_base: https://open.bigmodel.cn/api/anthropic
+          api_key: "your-zhipu-api-key"
+      - source: claude-haiku-4-5
+        target:
+          model: glm-5.1
+          api_base: https://open.bigmodel.cn/api/anthropic
+          api_key: "your-zhipu-api-key"
+
+  # ── Kimi K2.6 (Moonshot) ──────────────────────────────
+  kimi:
+    label: Kimi K2.6 (256K)
+    mappings:
+      - source: claude-opus-4-7
+        target:
+          model: kimi-for-coding
+          api_base: https://api.kimi.com/coding
+          api_key: "your-kimi-api-key"
+      - source: claude-sonnet-4-6
+        target:
+          model: kimi-for-coding
+          api_base: https://api.kimi.com/coding
+          api_key: "your-kimi-api-key"
+      - source: claude-haiku-4-5
+        target:
+          model: kimi-for-coding
+          api_base: https://api.kimi.com/coding
+          api_key: "your-kimi-api-key"
+
+  # ── MiniMax M2.7 ──────────────────────────────────────
+  minimax:
+    label: MiniMax M2.7
+    mappings:
+      - source: claude-opus-4-7
+        target:
+          model: MiniMax-M2.7
+          api_base: https://api.minimaxi.com/anthropic
+          api_key: "your-minimax-api-key"
+      - source: claude-sonnet-4-6
+        target:
+          model: MiniMax-M2.7
+          api_base: https://api.minimaxi.com/anthropic
+          api_key: "your-minimax-api-key"
+      - source: claude-haiku-4-5
+        target:
+          model: MiniMax-M2.7
+          api_base: https://api.minimaxi.com/anthropic
+          api_key: "your-minimax-api-key"
+
+  # ── 自定义中转（示例） ─────────────────────────────────
+  # 如果你有第三方 API 中转服务，照这个格式添加：
+  custom:
+    label: 自定义中转 (示例)
+    mappings:
+      - source: claude-opus-4-7
+        target:
+          model: claude-opus-4-7[1m]
+          api_base: https://your-proxy.example.com
+          api_key: "sk-your-custom-key"
+      - source: claude-sonnet-4-6
+        target:
+          model: claude-sonnet-4-6[1m]
+          api_base: https://your-proxy.example.com
+          api_key: "sk-your-custom-key"
+      - source: claude-haiku-4-5
+        target:
+          model: claude-haiku-4-5-20251001
+          api_base: https://your-proxy.example.com
+          api_key: "sk-your-custom-key"
